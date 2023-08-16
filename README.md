@@ -40,3 +40,6 @@ php artisan make:controller backoffice/
 1 TailwindCSS
 2 ViteJS
 3 Livewire Laravel
+
+## run dev
+- npm run dev
