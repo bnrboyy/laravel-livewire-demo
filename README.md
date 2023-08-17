@@ -1,6 +1,6 @@
 ## Installation Guide
 1 laravel new project-app
-2 composer require laravel/passport
+2 composer require laravel/passport --with-all-dependencies  // สำหรับ laravel version > 9.* 
     @file app/models/User 
         #แก้ไข use Laravel\Passport\HasApiTokens
     @file config/auth
@@ -43,3 +43,6 @@ php artisan make:controller backoffice/
 
 ## run dev
 - npm run dev
+
+## configure
+- 'timezone' => 'Asia/Bangkok'

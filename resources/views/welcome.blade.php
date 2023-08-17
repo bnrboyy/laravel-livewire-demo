@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <livewire:styles />
+    <livewire:scripts />
     @livewireStyles
     @vite('resources/css/app.css')
     <title>Laravel Livewire</title>
@@ -12,13 +13,12 @@
 <body>
     <main class="flex flex-col justify-center items-center w-full h-full">
         <livewire:comments />
+        {{-- <livewire:comments :comments="$comments" /> --}}
         {{-- @livewire('comments') --}}
-
     </main>
 
 
 
-    <livewire:scripts />
     {{-- @livewireScripts --}}
 </body>
 </html>
