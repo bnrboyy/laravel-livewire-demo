@@ -16,7 +16,7 @@ class Comments extends Component
 
     protected $listeners = ['fileUpload' => 'handlePreviewImg'];
 
-    public function handlePreviewImg($imageSrc) {
+    public function handlePreviewImg($imageSrc, $id) {
         $this->image = $imageSrc;
     }
     // public function mount()
@@ -58,7 +58,7 @@ class Comments extends Component
     public function render()
     {
         return view('livewire.comments', [
-            'allComments' => Comment::latest()-> paginate(1)
+            'allComments' => Comment::latest()->paginate(5)
         ]);
     }
 }

@@ -8,6 +8,7 @@
     <livewire:scripts />
     @livewireStyles
     @vite('resources/css/app.css')
+    <link rel="stylesheet" href="{{ asset('fontawesome-free-6.4.2-web/css/all.min.css') }}">
     <title>Laravel Livewire</title>
 </head>
 <body>

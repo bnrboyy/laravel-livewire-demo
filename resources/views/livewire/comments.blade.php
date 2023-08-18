@@ -27,7 +27,7 @@
     <div class="flex flex-col items-center gap-4 w-full h-[calc(100vh-100px)] overflow-auto">
         @foreach ($allComments as $comment)
             <div class="w-full min-h-[100px] p-4 overflow-auto border border-black">
-                <button class="w-[50px] rounded bg-red-500" wire:click="onDelete({{ $comment->id }})">DEL</button>
+                <button class="w-[50px] rounded bg-red-500" wire:click="onDelete({{ $comment->id }})"><i class="fa-solid fa-trash"></i></button>
                 <p><span class=" text-lg font-bold">Content : </span>{{ $comment->body }}</p>
                 <p><span class=" text-lg font-bold">Creator : </span>{{ $comment->creator->name }}</p>
                 <p><span class=" text-lg font-bold">Created at : </span>{{ $comment->created_at->diffForHumans() }}</p>
@@ -45,7 +45,7 @@
 
         let reader = new FileReader();
         reader.onloadend = () => {
-            window.livewire.emit('fileUpload', reader.result) // โยนฟังก์ชั่นไป livewire component
+            window.livewire.emit('fileUpload', reader.result, 1) // โยนฟังก์ชั่นไป livewire component
             // console.log(reader.result)
             // previewImg.src = reader.result;
         }
