@@ -16,7 +16,7 @@
 
             {{-- numbers of pages --}}
             @foreach ($elements as $element)
-                <ul class="flex justify-center items-center gap-2">
+                <ul class="flex justify-center items-center gap-1">
                     @if (is_array($element))
                         @foreach ($element as $page => $url)
                             @if ($page === $paginator->currentPage())

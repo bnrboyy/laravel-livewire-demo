@@ -16,7 +16,8 @@ class Comments extends Component
 
     protected $listeners = ['fileUpload' => 'handlePreviewImg'];
 
-    public function handlePreviewImg($imageSrc, $id) {
+    public function handlePreviewImg($imageSrc, $id)
+    {
         $this->image = $imageSrc;
     }
     // public function mount()
@@ -40,7 +41,7 @@ class Comments extends Component
         $createdComment = Comment::create(['body' => $this->newComment, 'user_id' => 1]);
         // $this->allComments->prepend($createdComment);
         $this->newComment = "";
-        session()->flash('messageAdded', 'Comment has been created successfully.');
+        session()->flash('message', 'Created successfully.');
         // array_unshift($this->allComments, [ // เพื่ม array ไปตำแหน่งแรก
         //     'body' => $this->newComment,
         //     'created_at' => Carbon::now()->diffForHumans(),
@@ -50,9 +51,11 @@ class Comments extends Component
 
     public function onDelete($id)
     {
-        Comment::find($id)->delete();
+        $comment = Comment::find($id);
+        $comment->delete();
+        $this->dispatchBrowserEvent('deleted', ['message' => "Deleted!", 'status' => 200]);
+        // session()->flash('message', 'Comment has been deleted successfully.');
         // $this->mount(); // เรียกใข้งาน function mount()
-        session()->flash('messageDel', 'Comment has been deleted successfully.');
     }
 
     public function render()
