@@ -32,15 +32,22 @@ class Comments extends Component
     public function handlePreviewImg($imageSrc, $id)
     {
         $this->image = $imageSrc;
+        $this->btnRemove = "";
     }
-    // public function mount()
-    // { // ฟังก์ชั่นที่จะทำงานเมื่อ Render commponent.
-    //     $initialComments = Comment::latest()->get(); // Order by DESC
-    //     $this->allComments = $initialComments;
-    // }
 
-    public function updated($field)
-    { // Realtime Validation.
+    public function removeImg() {
+        $this->image = $this->noImg;
+        $this->file = null;
+        $this->btnRemove = "hidden";
+    }
+    public function mount()
+    { // ฟังก์ชั่นที่จะทำงานเมื่อ Render commponent.
+        // $initialComments = Comment::latest()->get(); // Order by DESC
+        // $this->allComments = $initialComments;
+    }
+
+    public function updated($field) // Realtime Validation.
+    {
         $this->validateOnly($field, ['newComment' => 'required|max:255']);
     }
 
@@ -62,7 +69,7 @@ class Comments extends Component
         ]);
         if ($createdComment) {
             $this->newComment = "";
-            // $this->allComments->prepend($createdComment);
+            // $this->allComments->prepend($createdComment); // push ข้อมูลไปตำแหน่งแรกของ อาเรย์
             $this->image = $this->noImg;
             $this->btnRemove = "hidden";
             session()->flash('message', 'Created successfully.');
@@ -98,6 +105,9 @@ class Comments extends Component
         $comment = Comment::find($id);
         $comment->delete();
         $this->dispatchBrowserEvent('deleted', ['message' => "Deleted!", 'status' => 200]);
+        // $this->image = $this->noImg;
+        // $this->file = null;
+        // $this->newComment = "";
         // session()->flash('message', 'Comment has been deleted successfully.');
         // $this->mount(); // เรียกใข้งาน function mount()
     }
@@ -107,7 +117,7 @@ class Comments extends Component
     public function render()
     {
         return view('livewire.comments', [
-            'allComments' => Comment::latest()->paginate(5)
+            'allComments' => Comment::latest()->paginate(3)
         ]);
     }
 }
