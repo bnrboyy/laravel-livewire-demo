@@ -1,13 +1,20 @@
 <div class="flex flex-col gap-2 items-center w-[800px] h-full min-h-screen p-4 overflow-y-hidden ">
-
-    @if ($image)
-        <img src={{ $image }} id="preview-img" alt="">
-    @endif
-    <input type="file" id="image" wire:change="$emit('imageChoosen')" accept="image/jpeg, image/png, image/jpg">
+    <div class="flex flex-wrap gap-2">
+        <div class="w-[140px] relative">
+            <figure class="group relative h-[145px] shadow-md bg-white rounded-[5px] border border-[#6d71752b]">
+                <div class="group-hover:block absolute inset-0 left-0 top-0 border border-solid border-gray-300 rounded-[5px] pointer-events-none"></div>
+                <button onclick="removeImg()" class="btn-remove {{ $btnRemove }} w-[25px] h-[25px] flex justify-center items-center rounded-[50%] absolute z-50 right-[2px] top-[3px] bg-red-200 bg-opacity-40 duration-500 hover:bg-red-400"><i class="fa-solid fa-xmark"></i></button>
+                @if ($image)
+                    <img class="w-full h-full bg-[#e9e9e9] rounded-[4px] object-fill pointer-events-none scale-100 group-hover:scale-90 duration-500" src={{ $image }} id="preview-img" alt="" style="width: 150px;">
+                @endif
+                <input class="cursor-pointer w-full h-full absolute left-0 opacity-0 top-0" type="file" id="image" wire:change="$emit('imageChoosen')" wire:model="file" accept="image/jpeg, image/png, image/jpg">
+            </figure>
+        </div>
+    </div>
     <div class="flex justify-center items-center gap-2 w-full h-[100px]">
         <div class="flex flex-col justify-center p-0 m-0">
             <textarea class="p-2 border border-gray-500 rounded shadow" name="" id="" cols="90" rows="2"
-                wire:model="newComment"></textarea>
+                wire:model.debounce.500ms="newComment"></textarea>
             @error('newComment')
                 <span class="text-red-500 text-xs text-end">{{ $message }}</span>
             @enderror
@@ -20,16 +27,21 @@
         @foreach ($allComments as $comment)
             <div class="w-full min-h-[100px] h-auto p-4 bg-gray-100 border shadow rounded">
                 <div class="flex justify-between">
-                    <p class="w-full"><span class="text-lg font-bold">Created at :
-                        </span>{{ $comment->created_at->diffForHumans() }}</p>
+                    @if ($comment->image)
+                        <img src="storage/{{$comment->image}}" alt="" width=50>
+                    @else
+                        <img src="{{$noImg}}" alt="" width=50>
+                    @endif
                     <div class="flex gap-1">
-                        <button class="w-[50px] rounded bg-yellow-500 border shadow"
-                            wire:click="onDelete({{ $comment->id }})"><i
-                                class="fa-solid fa-pen-to-square"></i></button>
+                        <button class="w-[50px] rounded bg-yellow-500 border shadow">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
                         <button class="w-[50px] rounded bg-red-500 border shadow"
-                            wire:click="onDelete({{ $comment->id }})"><i class="fa-solid fa-trash-can"></i></button>
+                        wire:click="onDelete({{ $comment->id }})"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 </div>
+                <p class="w-full"><span class="text-lg font-bold">Created at :
+                    </span>{{ $comment->created_at->diffForHumans() }}</p>
                 <p><span class=" text-lg font-bold">Content : </span>{{ $comment->body }}</p>
                 <p><span class=" text-lg font-bold">Creator : </span>{{ $comment->creator->name }}</p>
             </div>
@@ -39,20 +51,24 @@
     @if (session()->has('message'))
         <script>
             toastr.success("{{ Session::get('message') }}");
-            </script>
+        </script>
     @endif
 </div>
 
 
 <script>
+    const file = document.getElementById('image')
+    const btn_remove = document.querySelector('.btn-remove');
+    let previewImg = document.querySelector('#preview-img');
+    btn_remove.classList.add('hidden');
+
     window.addEventListener('deleted', event => { // รับ response (event) จาก livewire component เหมือน axios
         const response = event.detail;
         toastr.success(response.message);
         // ทำตามขั้นตอนต่อไป เช่น ปรับแต่งหน้าเว็บ หรือดำเนินการอื่นๆ
     });
+
     window.livewire.on('imageChoosen', () => {
-        const previewImg = document.querySelector('#preview-img')
-        const file = document.getElementById('image')
         const image = file.files[0];
 
         let reader = new FileReader();
@@ -61,5 +77,14 @@
             // previewImg.src = reader.result;
         }
         reader.readAsDataURL(image);
+        btn_remove.classList.remove('hidden');
     })
+
+    function removeImg() {
+        file.value = "";
+        previewImg.src = 'https://backoffice.juppgas-delivery.shop/images/no-image.png';
+        btn_remove.classList.add('hidden');
+    }
+
+
 </script>

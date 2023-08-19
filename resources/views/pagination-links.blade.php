@@ -22,7 +22,7 @@
                             @if ($page === $paginator->currentPage())
                                 <li class="flex justify-center items-center rounded bg-red-400 text-white border shadow w-[30px] h-[30px]" wire:click="gotoPage({{ $page }})">{{ $page }}</li>
                             @else
-                                <li class="flex justify-center items-center rounded bg-gray-100 border shadow w-[30px] h-[30px] cursor-pointer" wire:click="gotoPage({{ $page }})">{{ $page }}</li>
+                                <li class="flex justify-center items-center rounded bg-gray-100 border shadow w-[30px] h-[30px] cursor-pointer duration-200 hover:scale-110" wire:click="gotoPage({{ $page }})">{{ $page }}</li>
                             @endif
                         @endforeach
                     @endif
