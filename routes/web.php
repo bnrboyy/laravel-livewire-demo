@@ -21,5 +21,5 @@ use App\Http\Livewire\Comments;
 
 
 Route::get('/', Home::class);
-Route::get('/comment', Comments::class);
+Route::get('/comment', Comments::class)->name('comment');
 Route::get('/login', Login::class);

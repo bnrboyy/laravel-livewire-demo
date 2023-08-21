@@ -2,3 +2,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+nav a {
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+}
+
+nav a:after {
+    content: "";
+    position: absolute;
+    background-color: #ff3c78;
+    height: 2.5px;
+    width: 0;
+    left: 0;
+    bottom: -2px;
+    transition: 0.3s;
+}
+
+nav a:hover:after {
+    width: 100%;
+}

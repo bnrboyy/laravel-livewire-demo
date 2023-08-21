@@ -1,4 +1,5 @@
-<div class="flex flex-col gap-2 items-center w-[800px] h-full min-h-screen p-4 overflow-y-hidden ">
+<div>
+    <div class="flex flex-col gap-2 items-center w-[800px] h-full min-h-screen p-4 overflow-y-hidden ">
         <div class="flex flex-wrap gap-2">
             <div class="w-[140px] relative">
                 <figure class="group relative h-[145px] shadow-md bg-white rounded-[5px] border border-[#6d71752b]">
@@ -26,11 +27,12 @@
             </div>
             <button
                 class="w-[100px] h-[67.61px] flex flex-col justify-center items-center rounded bg-blue-500 border shadow"
-                wire:click="addComment"><i class="fa-solid fa-plus"></i>Add</button>
+                wire:click="addComment"><i class="fa-solid fa-square-plus fa-xl"></i></button>
         </div>
         <div class="flex flex-col items-center gap-4 w-full h-[calc(100vh-100px)] overflow-auto">
             @foreach ($allComments as $comment)
-                <div class="w-full min-h-[180px] h-auto p-4 bg-gray-100 border shadow rounded">
+                <div :key="{{ $comment->id }}"
+                    class="w-full min-h-[180px] h-auto p-4 bg-gray-100 border shadow rounded">
                     <div class="flex justify-between">
                         @if ($comment->image)
                             <img src="storage/{{ $comment->image }}" alt="" width=50>
@@ -39,7 +41,7 @@
                         @endif
                         <div class="flex items-start gap-1">
                             <button class="w-[50px] rounded bg-yellow-500 border shadow"
-                                onclick="my_modal_3.showModal()">
+                                onclick="openDialog({{ $comment }})">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             <button class="w-[50px] rounded bg-red-500 border shadow"
@@ -62,13 +64,59 @@
                 toastr.success("{{ Session::get('message') }}");
             </script>
         @endif
+        {{-- <button class="btn" onclick="my_modal_3.showModal()">open modal</button> --}}
+        <dialog id="my_modal_3" class="modal">
+            <form method="dialog" class="modal-box">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <img src="" alt="" id="imageShow">
+                <input type="text" id="editBody">
+                <input type="text" id="imgSrc">
+            </form>
+        </dialog>
+
+    </div>
+    <script>
+        // document.addEventListener('DOMContentLoaded', function () {
+        // });
+
+        function openDialog(_comment) {
+            const hostname = window.location.hostname;
+            const body = document.getElementById("editBody")
+            const iamgeShow = document.getElementById("imageShow")
+
+            body.value = _comment.body
+            iamgeShow.src = hostname + "/" + _comment.image
+            my_modal_3.showModal();
+        }
+
+        document.addEventListener('livewire:load', function() {
+            // var commenets = @js($allComments);
+            // console.log(commenets.data)
+            function deleteComment(_id) {
+                window.livewire.emit("deleteComment", _id);
+            }
+            window.addEventListener("deleted", (event) => {
+                // รับ response (event) จาก livewire component เหมือน axios
+                const response = event.detail;
+                toastr.success(response.message);
+                // ทำตามขั้นตอนต่อไป เช่น ปรับแต่งหน้าเว็บ หรือดำเนินการอื่นๆ
+            });
+
+            window.livewire.on("imageChoosen", () => {
+                let btn_remove = document.querySelector(".btn-remove");
+                // btn_remove.classList.add("hidden");
+                const file = document.getElementById("image");
+                const image = file.files[0];
+                let reader = new FileReader();
+                reader.onloadend = () => {
+                    window.livewire.emit("fileUpload", reader.result,
+                        1); // โยนฟังก์ชั่นไป livewire component
+                    // previewImg.src = reader.result;
+                };
+                reader.readAsDataURL(image);
+                btn_remove.classList.remove("hidden");
+            });
+        })
+    </script>
 </div>
-{{-- <button class="btn" onclick="my_modal_3.showModal()">open modal</button> --}}
-<dialog id="my_modal_3" class="modal">
-    <form method="dialog" class="modal-box">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-        <h3 class="font-bold text-lg">Hello! Nantachai</h3>
-        <p class="py-4">Press ESC key or click on ✕ button to close</p>
-    </form>
-</dialog>
-<script src="{{ asset('js/pages/comment.js') }}"></script>
+{{-- <script src="{{ asset('js/pages/comment.js') }}"></script> --}}

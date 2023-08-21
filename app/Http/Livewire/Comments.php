@@ -17,17 +17,22 @@ class Comments extends Component
     use WithFileUploads;
     // public $allComments;
     public $newComment;
-    public $noImg = "https://backoffice.juppgas-delivery.shop/images/no-image.png";
+    public $noImg = "images/no-image.png";
     public $image;
     public $file;
-    public $btnRemove = "";
+    public $btnRemove = "hidden";
+
+    public $formEdit = [
+        'comment' => "",
+        'image' => "",
+    ];
 
     public function __construct()
     {
         $this->image = $this->noImg;
     }
 
-    protected $listeners = ['fileUpload' => 'handlePreviewImg'];
+    protected $listeners = ['fileUpload' => 'handlePreviewImg', 'deleteComment', 'getCommentOne'];
 
     public function handlePreviewImg($imageSrc, $id)
     {
@@ -35,13 +40,20 @@ class Comments extends Component
         $this->btnRemove = "";
     }
 
-    public function removeImg() {
+    public function deleteComment($id)
+    {
+        dd($id);
+    }
+
+    public function removeImg()
+    {
         $this->image = $this->noImg;
         $this->file = null;
         $this->btnRemove = "hidden";
     }
     public function mount()
     { // ฟังก์ชั่นที่จะทำงานเมื่อ Render commponent.
+        // $this->redirect(route('comment'));
         // $initialComments = Comment::latest()->get(); // Order by DESC
         // $this->allComments = $initialComments;
     }
@@ -74,7 +86,6 @@ class Comments extends Component
             $this->btnRemove = "hidden";
             session()->flash('message', 'Created successfully.');
             $this->file = null;
-
         }
         // array_unshift($this->allComments, [ // เพื่ม array ไปตำแหน่งแรก
         //     'body' => $this->newComment,
@@ -100,6 +111,18 @@ class Comments extends Component
         // return $imgName;
     }
 
+    public function getCommentOne($id)
+    {
+        $comment = Comment::where(['id' => $id])->first();
+        if ($comment) {
+            $this->formEdit['comment'] = $comment->body;
+            $this->formEdit['image'] = $comment->image;
+            $this->dispatchBrowserEvent('getCommentOne', ['message' => "get comment success", 'status' => 200, 'data' => $comment]);
+        }
+
+
+    }
+
     public function onDelete($id)
     {
         $comment = Comment::find($id);
@@ -116,6 +139,9 @@ class Comments extends Component
 
     public function render()
     {
+        // return view('livewire.comments', [
+        //     'allComments' => Comment::latest()->paginate(3)
+        // ]);
         return view('livewire.comments', [
             'allComments' => Comment::latest()->paginate(3)
         ]);
