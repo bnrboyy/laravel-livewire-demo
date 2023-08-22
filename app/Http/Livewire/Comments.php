@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Comment;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic;
 use Livewire\Component;
@@ -20,6 +21,7 @@ class Comments extends Component
     public $noImg = "images/no-image.png";
     public $image;
     public $file;
+    public $fileImgUpdate;
     public $btnRemove = "hidden";
 
     public $formEdit = [
@@ -32,12 +34,17 @@ class Comments extends Component
         $this->image = $this->noImg;
     }
 
-    protected $listeners = ['fileUpload' => 'handlePreviewImg', 'deleteComment', 'getCommentOne'];
+    protected $listeners = ['fileUpload' => 'handlePreviewImg', 'deleteComment', 'getCommentOne', 'updateComment'];
 
     public function handlePreviewImg($imageSrc, $id)
     {
         $this->image = $imageSrc;
         $this->btnRemove = "";
+    }
+
+    public function updateComment(Request $request) {
+        dd($request->input('name'));
+
     }
 
     public function deleteComment($id)
@@ -53,6 +60,8 @@ class Comments extends Component
     }
     public function mount()
     { // ฟังก์ชั่นที่จะทำงานเมื่อ Render commponent.
+
+
         // $this->redirect(route('comment'));
         // $initialComments = Comment::latest()->get(); // Order by DESC
         // $this->allComments = $initialComments;
@@ -98,6 +107,8 @@ class Comments extends Component
     {
         if (!$this->image) return null;
 
+        dd($this->image);
+
         $path = 'uploads' . "/" . date('Y') . "/" . date('m');
         if (!Storage::exists($path)) {
             Storage::makeDirectory($path);
@@ -115,8 +126,8 @@ class Comments extends Component
     {
         $comment = Comment::where(['id' => $id])->first();
         if ($comment) {
-            $this->formEdit['comment'] = $comment->body;
-            $this->formEdit['image'] = $comment->image;
+            // $this->formEdit['comment'] = $comment->body;
+            // $this->formEdit['image'] = $comment->image;
             $this->dispatchBrowserEvent('getCommentOne', ['message' => "get comment success", 'status' => 200, 'data' => $comment]);
         }
 
